@@ -1,18 +1,20 @@
 import Logo from "@/assets/icons/Logo";
 import BgImage from "../assets/images/bg-image.png";
-import { Link } from "react-router";
-import React, { useState } from "react";
-import { useLoginMutation } from "@/redux/features/auth/auth.api";
+import { Link, useNavigate } from "react-router";
+import React, { useState, type FormEvent } from "react";
+import { authApi, useLoginMutation } from "@/redux/features/auth/auth.api";
 import { toast } from "sonner";
+import { useAppDispatch } from "@/redux/hook";
 
 const Login = () => {
   const [login, setLogin] = useState({
     email: "",
     password: "",
   });
+  const navigate = useNavigate();
+  const dispatch = useAppDispatch();
 
-  const [singIn] = useLoginMutation()
-
+  const [signIn] = useLoginMutation();
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setLogin((prev) => ({
@@ -21,20 +23,35 @@ const Login = () => {
     }));
   };
 
-  const handleSubmit =async(e)=>{
-    e.preventDefault()
-    const payload ={
-      email: login.email,
-      password: login.password
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    try {
+      const res = await signIn(login).unwrap();
+
+      if (res?.statusCode === 200) {
+        const userInfoRes = await dispatch(
+          authApi.endpoints.userInfo.initiate(undefined)
+        ).unwrap();
+
+        if (
+          userInfoRes?.statusCode === 201 &&
+          userInfoRes?.data?.role === "ADMIN"
+        ) {
+          navigate("/admin");
+        } else {
+          navigate("/");
+        }
+
+        toast.success("Login successful");
+      } else {
+        toast.error(res?.message || "Login failed");
+      }
+    } catch (error) {
+      console.error(error);
     }
-    console.log("payload",payload)
-    const res = await singIn(payload).unwrap()
-    console.log("res",res)
-    if(res){
-      toast.success("Login successfully")
-    }
-  }
-  
+  };
+
   return (
     <div
       className="h-screen w-screen bg-cover bg-center flex items-center justify-center"

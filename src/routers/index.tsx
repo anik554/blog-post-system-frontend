@@ -1,8 +1,12 @@
 import App from "@/App";
-import AdminLayout from "@/components/layout/AdminLayout";
+import DashboardLayout from "@/components/layout/DashboardLayout";
 import About from "@/pages/About";
 import Login from "@/pages/Login";
-import Posts from "@/pages/Posts";
+import AdminHome from "@/pages/admin/AdminHome";
+import Categories from "@/pages/admin/Categories";
+import Comments from "@/pages/admin/Comments";
+import Posts from "@/pages/admin/Posts";
+import Users from "@/pages/admin/Users";
 import { createBrowserRouter } from "react-router";
 
 export const router = createBrowserRouter([
@@ -17,13 +21,29 @@ export const router = createBrowserRouter([
     ],
   },
   {
-    Component: AdminLayout,
+    Component: DashboardLayout,
     path:"/admin",
     children:[
         {
+            Component: AdminHome,
+            index:true
+        },
+        {
             Component: Posts,
             path:"posts"
-        }
+        },
+        {
+            Component: Comments,
+            path:"comments"
+        },
+        {
+            Component: Users,
+            path:"users"
+        },
+        {
+            Component: Categories,
+            path:"categories"
+        },
     ]
   },
   {
