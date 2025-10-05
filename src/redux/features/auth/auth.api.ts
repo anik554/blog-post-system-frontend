@@ -1,21 +1,29 @@
 import { baseApi } from "@/redux/baseApi";
 
-const authApi = baseApi.injectEndpoints({
+export const authApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     login: builder.mutation({
       query: (userInfo) => ({
         url: "/auth/login",
         method: "POST",
-        body: userInfo,   // ✅ use body instead of data
+        data: userInfo,
       }),
+    }),
+    userInfo: builder.query({
+      query: () => ({
+        url: "/user/me",
+        method: "GET"
+      }),
+      providesTags:["USER"]
     }),
     logout: builder.mutation({
       query: () => ({
         url: "/auth/logout",
         method: "POST",
       }),
+      invalidatesTags:["USER"]
     }),
   }),
 });
 
-export const { useLoginMutation, useLogoutMutation } = authApi;
+export const { useLoginMutation, useLogoutMutation,useUserInfoQuery } = authApi;
