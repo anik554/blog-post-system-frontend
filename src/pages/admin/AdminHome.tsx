@@ -1,62 +1,23 @@
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-// import { Icons } from "@/components/icons";
-
-// Sample data types
-type Post = {
-  id: string;
-  sn: string;
-  title: string;
-  status: "Published" | "Draft" | "Scheduled";
-  views: string;
-  date: string;
-  author: string;
-};
-
-const samplePosts: Post[] = [
-  {
-    id: "1",
-    sn: "01",
-    title: "How AI Is Changing The Future Of Travel",
-    status: "Published",
-    views: "4,532",
-    date: "February 9, 2015",
-    author: "Marvin McKinney",
-  },
-  {
-    id: "2",
-    sn: "02",
-    title: "10 Easy Vegan Recipes For Busy People",
-    status: "Draft",
-    views: "4,532",
-    date: "November 7, 2017",
-    author: "Theresa Webb",
-  },
-  {
-    id: "3",
-    sn: "03",
-    title: "Best Budget Destinations For 2025",
-    status: "Draft",
-    views: "4,532",
-    date: "March 23, 2013",
-    author: "Jane Cooper",
-  },
-  {
-    id: "4",
-    sn: "04",
-    title: "10 Easy Vegan Recipes For Busy People",
-    status: "Published",
-    views: "4,532",
-    date: "May 31, 2015",
-    author: "Robert Fox",
-  },
-];
+import { useAllPostsQuery } from "@/redux/features/post/post.api";
+import { Spinner } from "@/components/ui/spinner";
+import { getCatNameById } from "@/utils/getCatById";
+import { getUserNameById } from "@/utils/getnameById";
+import { useAllCategoriesQuery } from "@/redux/features/category/category.api";
+import { useUserInfoQuery } from "@/redux/features/auth/auth.api";
+import type { IPost } from "@/types/post.type";
 
 export default function AdminHome() {
+  const { data: posts, isLoading } = useAllPostsQuery(undefined);
+  const { data: categories } = useAllCategoriesQuery(undefined);
+  const { data: userInfo } = useUserInfoQuery(undefined);
+  if (isLoading) {
+    return <Spinner />;
+  }
   return (
     <div className="min-h-screen bg-white text-slate-800">
       <div className="flex">
-
         {/* Main content */}
         <main className="flex-1">
           {/* Top stats */}
@@ -78,7 +39,7 @@ export default function AdminHome() {
                 </div>
               </CardHeader>
               <CardContent>
-                <div className="text-3xl font-bold">128</div>
+                <div className="text-3xl font-bold">{posts?.meta?.total}</div>
               </CardContent>
             </Card>
           </div>
@@ -90,55 +51,55 @@ export default function AdminHome() {
               <Button variant="ghost">See All</Button>
             </div>
 
-            <div className="bg-white rounded-lg border border-slate-100 shadow-sm">
-              <table className="w-full table-auto">
-                <thead className="bg-slate-50">
-                  <tr className="text-sm text-slate-500">
-                    <th className="p-4 text-left">S/N</th>
-                    <th className="p-4 text-left">Title</th>
-                    <th className="p-4 text-left">Status</th>
-                    <th className="p-4 text-left">Views</th>
-                    <th className="p-4 text-left">Date Published</th>
-                    <th className="p-4 text-left">Author</th>
-                    <th className="p-4 text-left">Actions</th>
+            <div className="overflow-x-auto border rounded-md">
+              <table className="w-full table-auto border-collapse">
+                <thead className="bg-gray-100">
+                  <tr>
+                    <th className="border px-4 py-2">SN</th>
+                    <th className="border px-4 py-2">Title</th>
+                    <th className="border px-4 py-2">Category</th>
+                    <th className="border px-4 py-2">Author</th>
+                    <th className="border px-4 py-2">Publish Date</th>
+                    <th className="border px-4 py-2">Tags</th>
+                    <th className="border px-4 py-2">Meta Description</th>
+                    <th className="border px-4 py-2">Blog Content</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {samplePosts.map((p) => (
-                    <tr
-                      key={p.id}
-                      className="border-t border-slate-100 hover:bg-slate-50"
-                    >
-                      <td className="p-4 text-sm text-slate-500 w-16">
-                        {p.sn}
-                      </td>
-                      <td className="p-4 text-sm">{p.title}</td>
-                      <td className="p-4 text-sm">
-                        <span
-                          className={`text-sm font-medium ${
-                            p.status === "Published"
-                              ? "text-emerald-600"
-                              : p.status === "Draft"
-                              ? "text-violet-600"
-                              : "text-amber-600"
-                          }`}
-                        >
-                          {p.status}
-                        </span>
-                      </td>
-                      <td className="p-4 text-sm">{p.views}</td>
-                      <td className="p-4 text-sm">{p.date}</td>
-                      <td className="p-4 text-sm">{p.author}</td>
-                      <td className="p-4 text-sm w-36 flex gap-3">
-                        <button className="p-2 rounded border border-slate-100 hover:bg-slate-50">
-                          {/* <Icons.edit className="w-4 h-4" /> */}
-                        </button>
-                        <button className="p-2 rounded border border-slate-100 hover:bg-slate-50">
-                          {/* <Icons.trash className="w-4 h-4" /> */}
-                        </button>
+                  {isLoading ? (
+                    <tr>
+                      <td colSpan={3} className="text-center py-4">
+                        Loading categories...
                       </td>
                     </tr>
-                  ))}
+                  ) : posts?.data?.length ? (
+                    posts.data.map((post: IPost, index: number) => (
+                      <tr key={post._id} className="hover:bg-gray-50">
+                        <td className="border px-4 py-2">{index + 1}</td>
+                        <td className="border px-4 py-2">{post.title}</td>
+                        <td className="border px-4 py-2">
+                          {getCatNameById(categories?.data, post.category)}
+                        </td>
+                        <td className="border px-4 py-2">
+                          {getUserNameById(userInfo?.data, post.author)}
+                        </td>
+                        <td className="border px-4 py-2">{post.publish_on}</td>
+                        <td className="border px-4 py-2">{post.tags}</td>
+                        <td className="border px-4 py-2">
+                          {post.meta_description}
+                        </td>
+                        <td className="border px-4 py-2">
+                          {post.blog_content}
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan={3} className="text-center py-4">
+                        No categories found.
+                      </td>
+                    </tr>
+                  )}
                 </tbody>
               </table>
             </div>
@@ -148,4 +109,3 @@ export default function AdminHome() {
     </div>
   );
 }
-

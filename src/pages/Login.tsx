@@ -1,10 +1,10 @@
 import Logo from "@/assets/icons/Logo";
-import BgImage from "../assets/images/bg-image.png";
 import { Link, useNavigate } from "react-router";
 import React, { useState, type FormEvent } from "react";
 import { authApi, useLoginMutation } from "@/redux/features/auth/auth.api";
 import { toast } from "sonner";
 import { useAppDispatch } from "@/redux/hook";
+import BgImage from "../assets/images/bg-image.png"
 
 const Login = () => {
   const [login, setLogin] = useState({

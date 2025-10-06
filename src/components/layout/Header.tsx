@@ -1,12 +1,13 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-// import { Icons } from "@/components/icons";
+import { useUserInfoQuery } from "@/redux/features/auth/auth.api";
 
 const Header = () => {
+  const { data: userInfo } = useUserInfoQuery(undefined);
   return (
     <header className="flex items-center justify-between bg-gray-200 px-8 py-4 border-b border-slate-100 w-full">
       <div>
-        <p className="text-sm text-slate-500">Good Morning !</p>
-        <h1 className="text-2xl font-bold">Tylor Greak</h1>
+        <p className="text-sm text-slate-500">Hello !</p>
+        <h1 className="text-2xl font-bold">{userInfo?.data?.name}</h1>
       </div>
 
       <div className="flex items-center gap-4">

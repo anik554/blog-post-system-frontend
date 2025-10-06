@@ -1,5 +1,6 @@
 import App from "@/App";
 import DashboardLayout from "@/components/layout/DashboardLayout";
+import CreatePost from "@/components/modules/posts/CreatePost";
 import About from "@/pages/About";
 import Login from "@/pages/Login";
 import AdminHome from "@/pages/admin/AdminHome";
@@ -31,6 +32,10 @@ export const router = createBrowserRouter([
         {
             Component: Posts,
             path:"posts"
+        },
+        {
+            Component: CreatePost,
+            path:"create"
         },
         {
             Component: Comments,

@@ -155,8 +155,8 @@ const Users = () => {
           </thead>
           <tbody>
             {allUsers?.data?.length ? (
-              allUsers.data.map((user, index) => (
-                <tr key={user.id} className="hover:bg-gray-50">
+              allUsers.data.map((user:{name:string,email:string,role:string,_id:string}, index:number) => (
+                <tr key={user._id} className="hover:bg-gray-50">
                   <td className="border px-4 py-2">{index + 1}</td>
                   <td className="border px-4 py-2">{user.name}</td>
                   <td className="border px-4 py-2">{user.email}</td>

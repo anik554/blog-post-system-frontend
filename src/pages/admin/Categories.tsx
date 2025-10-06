@@ -8,37 +8,13 @@ import {
   DialogTrigger,
   DialogClose,
 } from "@/components/ui/dialog";
-import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
   useAllCategoriesQuery,
   useCreateCategoryMutation,
   useDeleteCategoryMutation,
 } from "@/redux/features/category/category.api";
-
-const categoryOptions = [
-  ".NET",
-  "AI",
-  "Blockchain",
-  "Blog",
-  "Business",
-  "Data Engineering",
-  "DBI",
-  "Golang",
-  "Java",
-  "JavaScript",
-  "Mobile App Development",
-  "MVP",
-  "Personal",
-  "Programming & Development",
-  "Python",
-  "React",
-  "Software Development",
-  "SQL Server",
-  "Staff Augmentation",
-  "Technology",
-  "Web",
-];
+import { categoryOptions } from "@/constants/categories";
 
 const Categories = () => {
   const [selectedCategory, setSelectedCategory] = useState<string | undefined>(undefined);
@@ -99,7 +75,6 @@ const Categories = () => {
             </DialogHeader>
             <div className="grid gap-4 py-4 w-full">
               <div className="grid gap-1 w-full">
-                <Label htmlFor="categorySelect">Category</Label>
                 <Select
                   value={selectedCategory}
                   onValueChange={(val) => setSelectedCategory(val)}
@@ -149,8 +124,8 @@ const Categories = () => {
                 </td>
               </tr>
             ) : categories?.data?.length ? (
-              categories.data.map((cat: any, index: number) => (
-                <tr key={cat.id} className="hover:bg-gray-50">
+              categories.data.map((cat: {name:string,_id:string}, index: number) => (
+                <tr key={cat._id} className="hover:bg-gray-50">
                   <td className="border px-4 py-2">{index + 1}</td>
                   <td className="border px-4 py-2">{cat.name}</td>
                   <td className="border px-4 py-2 space-x-2">
